@@ -1,7 +1,39 @@
 /**
- * Routing API - Official Node.js Client
+ * Routing API - Official Node.js/TypeScript Client
  * 
- * Bank lookups, SWIFT codes, IBAN validation, OFAC screening, and more.
+ * Universal Crypto-to-Bank Transfers
+ * 
+ * Bank lookups, SWIFT codes, IBAN validation, crypto transfers, and more.
+ * Global coverage: 195+ countries with intelligent provider routing.
+ * 
+ * Usage:
+ *   import { RoutingAPIClient } from 'routing-api-client';
+ *   
+ *   const client = new RoutingAPIClient('your_api_key');
+ *   
+ *   // Crypto to bank transfer (any crypto, any country)
+ *   const result = await client.initiateCryptoToBank({
+ *     transactionId: 'txn_001',
+ *     sourceNetwork: 'bitcoin',
+ *     sourceToken: 'BTC',
+ *     platformWallet: '1A1z7agoat4bNjRreGMVP8hoShKzChF4P',
+ *     txHash: 'abc123def456',
+ *     expectedAmount: 0.01,
+ *     customerId: 'cust_001',
+ *     bankAccountToken: 'ba_token_123'
+ *   });
+ *   
+ *   // Check fees for any country
+ *   const fees = await client.calculateTransferFees('TN', 100);
+ *   console.log(`Customer gets: $${fees.customer_receives}`);
+ *   
+ * Coverage:
+ *   ✅ 195+ countries (all UN countries except US-sanctioned)
+ *   ✅ Any crypto: BTC, ETH, SOL, MATIC, AVAX, ARB, OP, etc.
+ *   ✅ 12 language SDKs available
+ *   ✅ Automatic provider routing (zero config)
+ *   ✅ Zero volatility risk (DEX takes it)
+ *   ✅ Immutable proof system
  */
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
@@ -257,6 +289,84 @@ export class RoutingAPIClient {
    */
   async getHealth(): Promise<HealthStatus> {
     return this.request('GET', '/health');
+  }
+
+  // ========== PROOF API: UNIVERSAL CRYPTO → BANK TRANSFERS ==========
+
+  /**
+   * Initiate complete crypto → USDC → Bank transfer flow
+   * Supports ANY cryptocurrency: BTC, ETH, SOL, MATIC, AVAX, ARB, OP, etc.
+   */
+  async initiateCryptoToBank(options: {
+    transactionId: string;
+    sourceNetwork: string;
+    sourceToken: string;
+    platformWallet: string;
+    txHash: string;
+    expectedAmount: number;
+    customerId: string;
+    bankAccountToken: string;
+  }): Promise<any> {
+    return this.request('POST', '/proof/crypto-to-bank/initiate', options);
+  }
+
+  /**
+   * Get complete proof for crypto → bank transaction
+   */
+  async getCryptoTransactionProof(transactionId: string): Promise<any> {
+    return this.request('GET', `/proof/crypto-to-bank/${transactionId}`);
+  }
+
+  /**
+   * Get list of supported cryptocurrencies and networks
+   */
+  async getSupportedNetworks(): Promise<any> {
+    return this.request('GET', '/proof/supported-networks');
+  }
+
+  /**
+   * Check cryptocurrency balance on any supported network
+   */
+  async checkCryptoBalance(network: string, address: string): Promise<any> {
+    return this.request('GET', `/proof/check-balance/${network}/${address}`);
+  }
+
+  /**
+   * Get quote for swapping any crypto to USDC
+   */
+  async getSwapQuote(network: string, token: string, amount: number): Promise<any> {
+    return this.request('GET', `/proof/get-swap-quote/${network}/${token}/${amount}`);
+  }
+
+  /**
+   * Get metrics across ALL supported cryptocurrencies
+   */
+  async getAllCryptoMetrics(): Promise<any> {
+    return this.request('GET', '/proof/metrics/all-crypto');
+  }
+
+  // ========== GLOBAL PAYMENT ROUTING ==========
+
+  /**
+   * Get payment provider info for a specific country
+   * Automatically routes to optimal provider (Paystack for Africa, Stripe for USA/Europe, etc.)
+   */
+  async getPaymentProviders(countryCode: string): Promise<any> {
+    return this.request('GET', `/proof/payment-providers/${countryCode}`);
+  }
+
+  /**
+   * Calculate fees for a transfer to a specific country
+   */
+  async calculateTransferFees(countryCode: string, amount: number): Promise<any> {
+    return this.request('GET', `/proof/calculate-fees/${countryCode}/${amount}`);
+  }
+
+  /**
+   * Get all available payment providers and their configurations
+   */
+  async getAllPaymentProviders(): Promise<any> {
+    return this.request('GET', '/proof/all-providers');
   }
 }
 
